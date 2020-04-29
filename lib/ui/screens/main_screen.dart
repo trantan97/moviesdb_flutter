@@ -6,7 +6,7 @@ import 'package:moviesdb/viewmodels/view_models.dart';
 
 class MainScreen extends StatelessWidget {
   static const routeName = "/MainScreen";
-  final List<Widget> _children = [Container(), Container(), SettingScreen()];
+  final List<Widget> _children = [HomeScreen(), Container(), SettingScreen()];
 
   @override
   Widget build(BuildContext context) {
