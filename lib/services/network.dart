@@ -14,6 +14,7 @@ class Network {
 
   Future<Response> get({String url, Map<String, dynamic> params}) async {
     try {
+      params ??= {};
       params["api_key"] = ApiConst.API_KEY;
       return await _dio.get(url, queryParameters: params, options: Options(responseType: ResponseType.json));
     } on DioError catch (e) {
