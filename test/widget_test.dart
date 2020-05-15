@@ -7,7 +7,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:moviesdb/app.dart';
+import 'package:moviesdb/src/app.dart';
 
 import 'package:moviesdb/main.dart';
 

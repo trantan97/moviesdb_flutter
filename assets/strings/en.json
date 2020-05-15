@@ -4,5 +4,8 @@
   "category_now_playing": "Now Playing",
   "category_up_coming": "Upcoming",
   "genres": "Genres",
-  "trending": "Trending"
+  "trending": "Trending",
+  "information": "Information",
+  "trailers": "Trailers",
+  "casts": "Casts"
 }

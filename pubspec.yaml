@@ -36,6 +36,8 @@ dependencies:
   carousel_slider: ^2.1.0
   smooth_page_indicator: ^0.1.5
   wave: ^0.0.8
+  youtube_player_flutter: ^6.1.1
+  intl: ^0.16.0
 
 dev_dependencies:
   flutter_test:
