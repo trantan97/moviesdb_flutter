@@ -1,14 +1,18 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:moviesdb/src/blocs/blocs.dart';
 import 'package:moviesdb/src/constants.dart';
 import 'package:moviesdb/src/data/models/models.dart';
 import 'package:moviesdb/src/resources/resources.dart';
 import 'package:moviesdb/src/ui/widgets/widgets.dart';
 import 'package:moviesdb/src/utils/utils.dart';
-import 'package:moviesdb/src/viewmodels/view_models.dart';
-import 'package:provider/provider.dart';
 
 class ListMoviesByGenre extends StatefulWidget {
+  final Genre genre;
+
+  const ListMoviesByGenre({Key key, this.genre}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     return _Sate();
@@ -24,23 +28,31 @@ class _Sate extends State<ListMoviesByGenre> {
     super.initState();
     _scrollController.addListener(_onScroll);
   }
-@override
+
+  @override
   void dispose() {
     _scrollController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
-    return Consumer<GenreViewModel>(builder: (context, model, _) {
-      final List<Movie> movies = model.moviesByGenre.movies ?? [];
-      return ListView.builder(
-        physics: ClampingScrollPhysics(),
-        itemCount: model.hasReachedMax ? movies.length : movies.length + 1,
-        itemBuilder: (context, index) =>
-            index < movies.length ? _item(movies[index]) : Center(child: ProgressLoading(size: 20)),
-        controller: _scrollController,
-      );
-    });
+    return BlocBuilder<GenreBloc, BaseState>(
+      builder: (context, state) {
+        if (state is LoadedState<MoviesByGenre>) {
+          final List<Movie> movies = state.data.movies ?? [];
+          return ListView.builder(
+            physics: ClampingScrollPhysics(),
+            itemCount: state.data.page < state.data.totalPages ? movies.length +1: movies.length,
+            itemBuilder: (context, index) {
+              return index < movies.length ? _item(movies[index]) : Center(child: ProgressLoading(size: 20));
+            },
+            controller: _scrollController,
+          );
+        }
+        return Wrap();
+      },
+    );
   }
 
   Widget _item(Movie movie) {
@@ -185,7 +197,7 @@ class _Sate extends State<ListMoviesByGenre> {
     final maxScroll = _scrollController.position.maxScrollExtent;
     final currentScroll = _scrollController.position.pixels;
     if (maxScroll - currentScroll <= _scrollThreshold) {
-      Provider.of<GenreViewModel>(context, listen: false).loadMore();
+      BlocProvider.of<GenreBloc>(context).add(LoadMoreMoviesByGenre(widget.genre));
     }
   }
 }

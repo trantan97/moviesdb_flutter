@@ -2,15 +2,14 @@ import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:moviesdb/src/blocs/blocs.dart';
 import 'package:moviesdb/src/constants.dart';
 import 'package:moviesdb/src/data/models/movie.dart';
-import 'package:moviesdb/src/services/services.dart';
 import 'package:moviesdb/src/ui/screens/screens.dart';
 import 'package:moviesdb/src/ui/widgets/widgets.dart';
 import 'package:moviesdb/src/utils/language.dart';
 import 'package:moviesdb/src/utils/utils.dart';
-import 'package:moviesdb/src/viewmodels/view_models.dart';
-import 'package:provider/provider.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class DetailMovieScreen extends StatelessWidget {
@@ -20,10 +19,9 @@ class DetailMovieScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Movie movie = ModalRoute.of(context).settings.arguments;
-    return ViewModelProvider<DetailMovieViewModel>.withoutConsumer(
-      viewModel: DetailMovieViewModel(),
-      onModelReady: (model) => model.getDetailMovie(movie.id),
-      builder: (context, model, _) => Scaffold(
+    return BlocProvider(
+      create: (context) => DetailMovieBloc()..add(GetDetailMovie(movie.id)),
+      child: Scaffold(
         appBar: AppBar(
           title: Text(
             movie.title,
@@ -37,87 +35,91 @@ class DetailMovieScreen extends StatelessWidget {
   }
 
   Widget _body(BuildContext context) {
-    return Consumer<DetailMovieViewModel>(
-      builder: (context, model, _) {
-        if (model.busy) return Center(child: ProgressLoading(size: 32));
-        return Container(
-          child: Stack(
-            children: <Widget>[
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  _youtubeView(),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          children: <Widget>[
-                            _information(context, model.movie),
-                            _genre(context, model.movie),
-                            _trailer(context, model.movie),
-                            _casts(context, model.movie),
-                          ],
+    return BlocBuilder<DetailMovieBloc, BaseState>(
+      builder: (context, state) {
+        if (state is LoadedState) {
+          return Container(
+            child: Stack(
+              children: <Widget>[
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    _youtubeView(),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: <Widget>[
+                              _information(context, state.data),
+                              _genre(context, state.data),
+                              _trailer(context, state.data),
+                              _casts(context, state.data),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  )
-                ],
-              ),
-            ],
-          ),
-        );
+                    )
+                  ],
+                ),
+              ],
+            ),
+          );
+        }
+        return Center(child: ProgressLoading(size: 32));
       },
     );
   }
 
   Widget _youtubeView() {
-    return Consumer<DetailMovieViewModel>(
-      builder: (context, model, _) {
-        final videos = model.movie.videos;
-        if (videos.length > 0) {
-          _playerController = YoutubePlayerController(
-            initialVideoId: videos.first.key,
-            flags: YoutubePlayerFlags(
-              mute: true,
-              loop: true,
-            ),
-          );
-          return YoutubePlayer(
-            controller: _playerController,
-            showVideoProgressIndicator: false,
-            bottomActions: <Widget>[
-              SizedBox(width: 14.0),
-              CurrentPosition(),
-              SizedBox(width: 8.0),
-              ProgressBar(isExpanded: true),
-              Text(
-                _playerController.metadata.duration.toString(),
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 12.0,
+    return BlocBuilder<DetailMovieBloc, BaseState>(
+      builder: (context, state) {
+        if (state is LoadedState<Movie>) {
+          final videos = state.data.videos;
+          if (videos.length > 0) {
+            _playerController = YoutubePlayerController(
+              initialVideoId: videos.first.key,
+              flags: YoutubePlayerFlags(
+                mute: true,
+                loop: true,
+              ),
+            );
+            return YoutubePlayer(
+              controller: _playerController,
+              showVideoProgressIndicator: false,
+              bottomActions: <Widget>[
+                SizedBox(width: 14.0),
+                CurrentPosition(),
+                SizedBox(width: 8.0),
+                ProgressBar(isExpanded: true),
+                Text(
+                  _playerController.metadata.duration.toString(),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 12.0,
+                  ),
+                ),
+                FullScreenButton(),
+              ],
+            );
+          }
+          return AspectRatio(
+            aspectRatio: 16 / 9,
+            child: CachedNetworkImage(
+              imageUrl: getImageUrl(state.data.backdropPath, imageSize: ImageSize.w500),
+              fit: BoxFit.cover,
+              placeholder: (context, url) => Container(
+                alignment: Alignment.center,
+                child: ProgressLoading(
+                  size: 20,
+                  strokeWidth: 1,
+                  valueColor: Colors.black,
                 ),
               ),
-              FullScreenButton(),
-            ],
+            ),
           );
         }
-
-        return AspectRatio(
-          aspectRatio: 16 / 9,
-          child: CachedNetworkImage(
-            imageUrl: getImageUrl(model.movie.backdropPath, imageSize: ImageSize.w500),
-            fit: BoxFit.cover,
-            placeholder: (context, url) => Container(
-              alignment: Alignment.center,
-              child: ProgressLoading(
-                size: 20,
-                strokeWidth: 1,
-                valueColor: Colors.black,
-              ),
-            ),
-          ),
-        );
+        return Wrap();
       },
     );
   }

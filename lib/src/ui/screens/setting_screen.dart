@@ -1,31 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:moviesdb/src/services/services.dart';
-import 'package:moviesdb/src/viewmodels/view_models.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:moviesdb/src/blocs/blocs.dart';
 
 class SettingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ViewModelProvider<SettingViewModel>.withoutConsumer(
-      viewModel: SettingViewModel(),
-      onModelReady: (model) => model.getVersionName(),
-      builder: (context, model, _) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text("Settings"),
-            centerTitle: true,
-            backgroundColor: Colors.white,
+    return BlocProvider(
+      create: (_) => SettingBloc()..add(GetAppVersion()),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Settings"),
+          centerTitle: true,
+          backgroundColor: Colors.white,
+        ),
+        body: Container(
+          padding: EdgeInsets.all(8),
+          child: Column(
+            children: <Widget>[
+              appVersion(context),
+            ],
           ),
-          body: Container(
-            padding: EdgeInsets.all(8),
-            child: Column(
-              children: <Widget>[
-                appVersion(context),
-              ],
-            ),
-          ),
-        );
-      },
+        ),
+      ),
     );
   }
 
@@ -40,12 +36,12 @@ class SettingScreen extends StatelessWidget {
         SizedBox(
           height: 8,
         ),
-        Consumer<SettingViewModel>(
-          builder: (context, model, _) {
-            if (model.versionName == null) {
-              return Text("...");
+        BlocBuilder<SettingBloc, BaseState>(
+          builder: (context, state) {
+            if (state is LoadedState<String>) {
+              return Text(state.data);
             }
-            return Text(model.versionName);
+            return Text("...");
           },
         )
       ],
