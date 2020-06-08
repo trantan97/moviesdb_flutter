@@ -23,5 +23,5 @@ class MoviesByGenre extends Movies {
   int idGenre;
 
   @override
-  List<Object> get props => [idGenre, page, totalPages];
+  List<Object> get props => [idGenre, page, totalPages, movies];
 }

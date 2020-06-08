@@ -1,13 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:moviesdb/src/blocs/blocs.dart';
 import 'package:moviesdb/src/constants.dart';
 import 'package:moviesdb/src/data/models/models.dart';
-import 'package:moviesdb/src/services/services.dart';
 import 'package:moviesdb/src/ui/screens/screens.dart';
 import 'package:moviesdb/src/ui/widgets/widgets.dart';
 import 'package:moviesdb/src/utils/utils.dart';
-import 'package:moviesdb/src/viewmodels/view_models.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key key}) : super(key: key);
@@ -15,57 +15,60 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final statusBarHeight = MediaQuery.of(context).padding.top;
-    return ViewModelProvider<HomeViewModel>.withConsumer(
-      viewModel: HomeViewModel(),
-      onModelReady: (model) => model.loadData(),
-      builder: (context, model, _) {
-        if (model.busy)
+    return BlocBuilder<HomeBloc, BaseState>(
+      builder: (context, state) {
+        if (state is LoadingState) {
           return Center(
               child: CircularProgressIndicator(
             valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
           ));
-        return Scaffold(
-          body: ScrollConfiguration(
-            behavior: NoGrowlingBehavior(),
-            child: NestedScrollView(
-              headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-                return <Widget>[
-                  SliverAppBar(
-                    expandedHeight: 150.0,
-                    floating: false,
-                    pinned: true,
-                    flexibleSpace: flexibleSpace(model, statusBarHeight),
-                  ),
-                ];
-              },
-              body: ScrollConfiguration(
-                behavior: NoGrowlingBehavior(),
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Column(
-                      children: <Widget>[
-                        HomeListMovies(category: model.upComing),
-                        HomeListMovies(category: model.nowPlaying),
-                        HomeListMovies(category: model.popular),
-                        HomeListMovies(category: model.topRate),
-                        HomeListGenre(
-                          genres: model.genres,
-                          onClick: (genre) => Navigator.of(context).pushNamed(GenreScreen.routeName, arguments: genre),
-                        )
-                      ],
+        }
+        if (state is LoadedHomeData) {
+          return Scaffold(
+            body: ScrollConfiguration(
+              behavior: NoGrowlingBehavior(),
+              child: NestedScrollView(
+                headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+                  return <Widget>[
+                    SliverAppBar(
+                      expandedHeight: 150.0,
+                      floating: false,
+                      pinned: true,
+                      flexibleSpace: flexibleSpace(state, statusBarHeight),
+                    ),
+                  ];
+                },
+                body: ScrollConfiguration(
+                  behavior: NoGrowlingBehavior(),
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Column(
+                        children: <Widget>[
+                          HomeListMovies(category: state.upComing),
+                          HomeListMovies(category: state.nowPlaying),
+                          HomeListMovies(category: state.popular),
+                          HomeListMovies(category: state.topRate),
+                          HomeListGenre(
+                            genres: state.genres,
+                            onClick: (genre) =>
+                                Navigator.of(context).pushNamed(GenreScreen.routeName, arguments: genre),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-        );
+          );
+        }
+        return Wrap();
       },
     );
   }
 
-  Widget flexibleSpace(HomeViewModel model, double statusBarHeight) {
+  Widget flexibleSpace(LoadedHomeData loadedState, double statusBarHeight) {
     return LayoutBuilder(
       builder: (context, boxContain) {
         final currentHeight = boxContain.biggest.height;
@@ -92,11 +95,11 @@ class HomeScreen extends StatelessWidget {
                     enlargeCenterPage: false,
                     viewportFraction: 1.0,
                     onPageChanged: (index, reason) {
-                      model.changeTrendingPosition(index);
+                      BlocProvider.of<HomeBloc>(context).add(ChangeTrendingPosition(index));
                     },
                     autoPlay: true,
                   ),
-                  items: model.trending.movies
+                  items: loadedState.trending.movies
                       .getRange(0, 5)
                       .map((movie) => itemTrending(context, movie, statusBarHeight))
                       .toList(),
@@ -109,7 +112,7 @@ class HomeScreen extends StatelessWidget {
                     alignment: Alignment.center,
                     child: PageIndicator(
                       itemCount: 5,
-                      currentIndex: model.trendingPosition,
+                      currentIndex: loadedState.trendingPosition,
                       selectedColor: Colors.white,
                       unSelectedColor: Colors.white30,
                     ),
