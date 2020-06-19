@@ -1,3 +1,4 @@
+import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:moviesdb/src/constants.dart';
 import 'package:moviesdb/src/data/models/models.dart';
 import 'package:moviesdb/src/locator.dart';
@@ -23,6 +24,7 @@ class MoviesRepositories {
     final response = await _network.get(
       url: ApiConst.DISCOVER_MOVIE_URL,
       params: {"with_genres": genreId, "page": page},
+      options: buildServiceCacheOptions()
     );
     if (response.isSuccess) {
       MoviesByGenre moviesByGenre = Movies.fromJson<MoviesByGenre>(MoviesByGenre(), response.data);
