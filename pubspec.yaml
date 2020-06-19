@@ -38,6 +38,7 @@ dependencies:
   youtube_player_flutter: ^6.1.1
   intl: ^0.16.0
   flutter_bloc: ^4.0.0
+  dio_http_cache: ^0.2.7
 
 dev_dependencies:
   flutter_test:
