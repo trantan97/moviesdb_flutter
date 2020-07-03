@@ -7,7 +7,7 @@ import 'package:moviesdb/src/repositories/repositories.dart';
 import 'package:rxdart/rxdart.dart';
 
 class GenreBloc extends Bloc<BaseEvent, BaseState> {
-  MoviesRepositories moviesRepositories = locator<MoviesRepositories>();
+  MoviesRepository moviesRepositories = locator<MoviesRepository>();
   bool loadingMore = false;
 
   @override

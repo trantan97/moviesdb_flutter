@@ -6,7 +6,7 @@ import 'package:moviesdb/src/blocs/blocs.dart';
 import 'package:moviesdb/src/repositories/repositories.dart';
 import 'package:package_info/package_info.dart';
 
-class MockSettingRepository extends Mock implements SettingRepositories {}
+class MockSettingRepository extends Mock implements SettingRepository {}
 
 main() {
   final PackageInfo packageInfo = PackageInfo(version: "0");
@@ -16,9 +16,9 @@ main() {
     setUp(() {
       final getIt = GetIt.instance;
       getIt.reset();
-      getIt.registerLazySingleton<SettingRepositories>(() => MockSettingRepository());
+      getIt.registerLazySingleton<SettingRepository>(() => MockSettingRepository());
       
-      repository = getIt<SettingRepositories>();
+      repository = getIt<SettingRepository>();
       bloc = SettingBloc();
     });
     tearDown(() {

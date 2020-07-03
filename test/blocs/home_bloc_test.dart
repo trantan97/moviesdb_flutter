@@ -7,7 +7,7 @@ import 'package:moviesdb/src/constants.dart';
 import 'package:moviesdb/src/data/models/models.dart';
 import 'package:moviesdb/src/repositories/repositories.dart';
 
-class MockMovieRepositories extends Mock implements MoviesRepositories {}
+class MockMovieRepositories extends Mock implements MoviesRepository {}
 
 main() {
   final Category popular = Category();
@@ -22,9 +22,9 @@ main() {
     setUp(() {
       final getIt = GetIt.instance;
       getIt.reset();
-      getIt.registerLazySingleton<MoviesRepositories>(() => MockMovieRepositories());
+      getIt.registerLazySingleton<MoviesRepository>(() => MockMovieRepositories());
 
-      repository = getIt<MoviesRepositories>();
+      repository = getIt<MoviesRepository>();
       bloc = HomeBloc();
     });
     tearDown(() {

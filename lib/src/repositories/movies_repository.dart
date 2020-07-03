@@ -6,7 +6,7 @@ import 'package:moviesdb/src/services/services.dart';
 import 'package:moviesdb/src/utils/utils.dart';
 import 'package:moviesdb/src/extension.dart';
 
-class MoviesRepositories {
+class MoviesRepository {
   Network _network = locator<Network>();
 
   Future<Movie> getDetailMovie(int movieId) async {
