@@ -5,3 +5,4 @@ export 'genre_view.dart';
 export 'page_indicator.dart';
 export 'movie_vote_average.dart';
 export 'genre/list_movies_by_genre.dart';
+export 'list_movies_item.dart';

@@ -31,6 +31,7 @@ class App extends StatelessWidget {
         MainScreen.routeName: (context) => MainScreen(),
         GenreScreen.routeName: (context) => GenreScreen(),
         DetailMovieScreen.routeName: (context) => DetailMovieScreen(),
+        FavoriteScreen.routeName: (context) => FavoriteScreen(),
       },
     );
   }

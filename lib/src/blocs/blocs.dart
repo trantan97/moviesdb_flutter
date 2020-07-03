@@ -4,3 +4,4 @@ export 'genre_bloc/blocs.dart';
 export 'setting_bloc/blocs.dart';
 export 'detail_movie_bloc/blocs.dart';
 export 'main_bloc/blocs.dart';
+export 'favorite_bloc/blocs.dart';

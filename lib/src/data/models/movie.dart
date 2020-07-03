@@ -44,4 +44,14 @@ class Movie extends Equatable {
           ? json["credits"]["cast"]?.map((e) => Actor.fromJson(e))?.toList()?.cast<Actor>()
           : [];
   }
+
+  Map<String, dynamic> toMap() {
+    return Map<String, dynamic>()
+      ..["id"] = id
+      ..["poster_path"] = porterPath
+      ..["title"] = title
+      ..["overview"] = overview
+      ..["release_date"] = releaseDate
+      ..["vote_average"] = voteAverage;
+  }
 }

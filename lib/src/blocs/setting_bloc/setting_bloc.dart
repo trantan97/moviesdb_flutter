@@ -6,7 +6,7 @@ import 'package:moviesdb/src/repositories/repositories.dart';
 import 'package:package_info/package_info.dart';
 
 class SettingBloc extends Bloc<BaseEvent, BaseState> {
-  SettingRepositories settingRepositories = locator<SettingRepositories>();
+  SettingRepository settingRepositories = locator<SettingRepository>();
 
   @override
   BaseState get initialState => InitState();

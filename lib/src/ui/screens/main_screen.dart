@@ -12,7 +12,7 @@ class MainScreen extends StatelessWidget {
       create: (_) => HomeBloc()..add(GetData()),
       child: HomeScreen(),
     ),
-    Container(),
+    FavoriteScreen(),
     SettingScreen(),
   ];
   final bloc = MainBloc();
@@ -23,7 +23,6 @@ class MainScreen extends StatelessWidget {
       bloc: bloc,
       builder: (context, state) {
         if (state is MainState) {
-          print('---------${state.index}');
           return Scaffold(
             body: _children[state.index],
             bottomNavigationBar: BottomNavigationBar(
@@ -44,7 +43,6 @@ class MainScreen extends StatelessWidget {
               selectedItemColor: Colors.black,
               currentIndex: state.index,
               onTap: (index) {
-                print('adfahsgghdlkfgl');
                 bloc.add(ChangeIndexBottomNavigation(index));
               },
             ),
