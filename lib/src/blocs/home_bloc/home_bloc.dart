@@ -7,7 +7,7 @@ import 'package:moviesdb/src/locator.dart';
 import 'package:moviesdb/src/repositories/repositories.dart';
 
 class HomeBloc extends Bloc<BaseEvent, BaseState> {
-  MoviesRepositories moviesRepositories = locator<MoviesRepositories>();
+  MoviesRepository moviesRepositories = locator<MoviesRepository>();
 
   @override
   BaseState get initialState => InitState();

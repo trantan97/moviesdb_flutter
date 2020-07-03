@@ -1,2 +1,3 @@
-export 'movies_repositories.dart';
-export 'setting_repositories.dart';
+export 'movies_repository.dart';
+export 'setting_repository.dart';
+export 'favorite_repository.dart';

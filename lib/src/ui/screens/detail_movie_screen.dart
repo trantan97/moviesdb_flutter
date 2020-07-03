@@ -19,8 +19,15 @@ class DetailMovieScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Movie movie = ModalRoute.of(context).settings.arguments;
-    return BlocProvider(
-      create: (context) => DetailMovieBloc()..add(GetDetailMovie(movie.id)),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => DetailMovieBloc()..add(GetDetailMovie(movie.id)),
+        ),
+        BlocProvider(
+          create: (context) => FavoriteBloc(),
+        )
+      ],
       child: Scaffold(
         appBar: AppBar(
           title: Text(
@@ -35,7 +42,12 @@ class DetailMovieScreen extends StatelessWidget {
   }
 
   Widget _body(BuildContext context) {
-    return BlocBuilder<DetailMovieBloc, BaseState>(
+    return BlocConsumer<DetailMovieBloc, BaseState>(
+      listener: (context, state) {
+        if (state is LoadedState) {
+          context.bloc<FavoriteBloc>().add(CheckFavorite(state.data));
+        }
+      },
       builder: (context, state) {
         if (state is LoadedState) {
           return Container(
@@ -153,9 +165,24 @@ class DetailMovieScreen extends StatelessWidget {
                 ),
               ),
               GestureDetector(
-                child: Padding(
-                  padding: const EdgeInsets.all(6),
-                  child: Icon(Icons.favorite_border),
+                onTap: () {
+                  context.bloc<FavoriteBloc>().add(ClickedFavorite(movie));
+                },
+                child: BlocBuilder<FavoriteBloc, BaseState>(
+                  condition: (previous, current) {
+                    return current is FavoriteState || current is NormalState;
+                  },
+                  builder: (context, state) {
+                    return Padding(
+                      padding: const EdgeInsets.all(6),
+                      child: state is FavoriteState
+                          ? Icon(
+                              Icons.favorite,
+                              color: Colors.redAccent,
+                            )
+                          : Icon(Icons.favorite_border),
+                    );
+                  },
                 ),
               ),
             ],

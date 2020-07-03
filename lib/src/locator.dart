@@ -9,8 +9,10 @@ GetIt locator = GetIt.instance;
 
 void setupLocator() {
   locator.registerLazySingleton(() => Network());
-  locator.registerLazySingleton<MoviesRepositories>(() => MoviesRepositories());
-  locator.registerLazySingleton<SettingRepositories>(() => SettingRepositories());
+  locator.registerLazySingleton(() => DatabaseProvider.databaseProvider);
+  locator.registerLazySingleton<MoviesRepository>(() => MoviesRepository());
+  locator.registerLazySingleton<SettingRepository>(() => SettingRepository());
+  locator.registerLazySingleton<FavoriteRepository>(() => FavoriteRepository());
 }
 
 void setupLocatorWithContext(BuildContext context) {

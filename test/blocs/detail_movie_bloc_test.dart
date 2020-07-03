@@ -17,9 +17,9 @@ main() {
     setUp(() {
       final getIt = GetIt.instance;
       getIt.reset();
-      getIt.registerLazySingleton<MoviesRepositories>(() => MockMovieRepositories());
+      getIt.registerLazySingleton<MoviesRepository>(() => MockMovieRepositories());
 
-      repository = getIt<MoviesRepositories>();
+      repository = getIt<MoviesRepository>();
       bloc = DetailMovieBloc();
     });
     tearDown(() {
