@@ -10,7 +10,7 @@ import 'home_bloc_test.dart';
 
 main() {
   final movieId = 1;
-  final Movie movie = Movie();
+  final Movie movie = Movie.empty();
   group("GenreBloc", () {
     DetailMovieBloc bloc;
     MockMovieRepositories repository;

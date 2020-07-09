@@ -1,28 +1,51 @@
 import 'package:equatable/equatable.dart';
+import 'package:floor/floor.dart';
 import 'package:moviesdb/src/data/models/models.dart';
 
+const String TABLE_FAVORITE = "table_favorite";
+
+@Entity(tableName: TABLE_FAVORITE)
 class Movie extends Equatable {
+  @primaryKey
   int id;
+  @ignore
   String backdropPath;
+  @ignore
   List<Genre> genres;
+  @ColumnInfo(name: "title", nullable: false)
   String title;
+  @ColumnInfo(name: "overview", nullable: true)
   String overview;
+  @ColumnInfo(name: "poster_path", nullable: true)
   String porterPath;
+  @ignore
   List<Company> productionCompanies;
+  @ColumnInfo(name: "release_date", nullable: true)
   String releaseDate;
+  @ignore
   int runtime;
+  @ignore
   int revenue;
+  @ignore
   int budget;
+  @ignore
   List<Video> videos;
+  @ignore
   List<Actor> cast;
+  @ColumnInfo(name: "vote_average", nullable: true)
   double voteAverage;
+  @ignore
   int voteCount;
 
   @override
   List<Object> get props => [id, title];
 
+  Movie(this.id, this.porterPath, this.title, this.overview, this.releaseDate, this.voteAverage);
+
+  Movie.empty();
+
   static Movie formJson(Map<String, dynamic> json) {
-    return Movie()
+    return Movie.empty()
       ..id = json["id"]
       ..backdropPath = json["backdrop_path"]
       ..title = json["title"]

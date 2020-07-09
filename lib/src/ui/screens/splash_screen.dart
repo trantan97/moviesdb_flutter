@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:moviesdb/src/locator.dart';
 import 'package:moviesdb/src/resources/resources.dart';
 import 'package:moviesdb/src/ui/screens/main_screen.dart';
 
@@ -18,6 +19,7 @@ class _State extends State<SplashScreen> {
 
   startTimer() async {
     _timer?.cancel();
+    await locator.allReady();
     _timer = Timer(Duration(seconds: 2), navigationPage);
   }
 
