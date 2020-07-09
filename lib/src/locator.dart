@@ -7,9 +7,8 @@ import 'repositories/repositories.dart';
 
 GetIt locator = GetIt.instance;
 
-void setupLocator() {
+void setupLocator() async {
   locator.registerLazySingleton(() => Network());
-  locator.registerLazySingleton(() => DatabaseProvider.databaseProvider);
   locator.registerLazySingleton<MoviesRepository>(() => MoviesRepository());
   locator.registerLazySingleton<SettingRepository>(() => SettingRepository());
   locator.registerLazySingleton<FavoriteRepository>(() => FavoriteRepository());

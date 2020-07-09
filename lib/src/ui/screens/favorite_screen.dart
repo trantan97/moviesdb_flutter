@@ -20,6 +20,7 @@ class FavoriteScreen extends StatelessWidget {
                 physics: ClampingScrollPhysics(),
                 itemCount: movies.length,
                 itemBuilder: (context, index) {
+                  print('----->${movies[index].toMap()}');
                   return ItemListMovie(
                     movie: movies[index],
                     onDismissed: (movie) {
